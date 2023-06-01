@@ -29,6 +29,8 @@ service /app on listenerPolice {
             log:printError("============================================Received an error=========================================");
 
             log:printError(result.message());
+             log:printError("============================================Error message ends here=========================================");
+
             return result;
         }
         log:printInfo(result.toString());
