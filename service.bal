@@ -26,6 +26,8 @@ service /app on listenerPolice {
     resource function get sayHello() returns json|error {
         json|error result = httpClient->get("/services/product-api/1.0.0/products");
         if (result is error) {
+            log:printError("============================================Received an error=========================================");
+
             log:printError(result.message());
             return result;
         }
