@@ -27,8 +27,10 @@ service /app on listenerPolice {
         json|error result = httpClient->get("/services/product-api/1.0.0/products");
         if (result is error) {
             log:printError(result.message());
-            return;
+            return result.message();
         }
         log:printInfo(result.toString());
+        return result.message();
+
     }
 }
