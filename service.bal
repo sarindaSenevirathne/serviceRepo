@@ -33,7 +33,10 @@ service /app on listenerPolice {
 
             return result;
         }
+         log:printInfo("*************************************** success response*********************************************************");
         log:printInfo(result.toString());
+         log:printInfo("*************************************** success response ends here*********************************************************");
+
         return result;
 
     }
