@@ -1,43 +1,63 @@
-import ballerina/http;
 import ballerina/log;
+import ballerinax/exchangerates;
+import ramith/countryprofile;
+import ballerina/http;
 
-type ApiConfigurations record {|
-    string baseUrl;
-    string scope;
-    string accessTokenUrl;
-    string clientId;
-    string clientSecret;
-|};
-
-configurable ApiConfigurations apiConfigurations = ?;
-
-http:Client httpClient = check new (apiConfigurations.baseUrl, 
-    auth = {
-        tokenUrl: apiConfigurations.accessTokenUrl,
-        clientId: apiConfigurations.clientId,
-        clientSecret: apiConfigurations.clientSecret,
-        scopes: [apiConfigurations.scope]
+# A service representing a network-accessible API
+# bound to port `9090`.
+@display {
+    label: "rateconvert",
+    id: "rateconvert-311bc702-c4cb-4836-abde-a377e04bfe2d"
+}
+service / on new http:Listener(9090) {
+    @display {
+        label: "Exchange Rates",
+        id: "exchangerates-e54d8d17-1549-4177-9dfd-7b368b4a8896"
     }
-);
+    exchangerates:Client exchangeratesEp;
 
-public listener http:Listener listenerPolice = new (9090);
+    @display {
+        label: "CountryProfile",
+        id: "countryprofile-c456774b-e9a3-4f09-968c-ba524293029c"
+    }
+    countryprofile:Client countryprofileEp;
 
-service /app on listenerPolice {
-    resource function get sayHello() returns json|error {
-        json|error result = httpClient->get("/services/product-api/1.0.0/products");
-        if (result is error) {
-            log:printError("============================================Received an error=========================================");
+    function init() returns error? {
+        self.exchangeratesEp = check new ();
+        self.countryprofileEp = check new (config = {
+            auth: {
+                clientId: clientId,
+                clientSecret: clientSecret
+            }
+        });
+    }
 
-            log:printError(result.message());
-             log:printError("============================================Error message ends here=========================================");
+    resource function get convert(decimal amount = 1.0, string target = "AUD", string base = "USD") returns PricingInfo|error {
 
-            return result;
-        }
-         log:printInfo("*************************************** success response*********************************************************");
-        log:printInfo(result.toString());
-         log:printInfo("*************************************** success response ends here*********************************************************");
+        log:printInfo("new request:", base = base, target = target, amount = amount);
+        countryprofile:Currency getCurrencyCodeResponse = check self.countryprofileEp->getCurrencyCode(code = target);
+        exchangerates:CurrencyExchangeInfomation getExchangeRateForResponse = check self.exchangeratesEp->getExchangeRateFor(apikey = exchangeRateAPIKey, baseCurrency = base);
 
-        return result;
+        decimal exchangeRate = <decimal>getExchangeRateForResponse.conversion_rates[target];
 
+        decimal convertedAmount = amount * exchangeRate;
+
+        PricingInfo pricingInfo = {
+            currencyCode: target,
+            displayName: getCurrencyCodeResponse.displayName,
+            amount: convertedAmount
+        };
+
+        return pricingInfo;
     }
 }
+
+type PricingInfo record {
+    string currencyCode;
+    string displayName;
+    decimal amount;
+};
+
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+configurable string exchangeRateAPIKey = ?;
