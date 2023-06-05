@@ -35,7 +35,7 @@ service / on new http:Listener(9090) {
     resource function get convert(decimal amount = 1.0, string target = "AUD", string base = "USD") returns json|error {
 
         log:printInfo("new request:", base = base, target = target, amount = amount);
-        // countryprofile:Currency getCurrencyCodeResponse = check self.countryprofileEp->getCurrencyCode(code = target);
+         countryprofile:Currency getCurrencyCodeResponse = check self.countryprofileEp->getCurrencyCode(code = target);
         // exchangerates:CurrencyExchangeInfomation getExchangeRateForResponse = check self.exchangeratesEp->getExchangeRateFor(apikey = exchangeRateAPIKey, baseCurrency = base);
 
         // decimal exchangeRate = <decimal>getExchangeRateForResponse.conversion_rates[target];
