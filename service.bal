@@ -5,19 +5,6 @@ import ballerina/http;
 
 # A service representing a network-accessible API
 # bound to port `9090`.
-# 
-# 
-
-type PricingInfo record {
-    string currencyCode;
-    string displayName;
-    decimal amount;
-};
-
-configurable string clientId = ?;
-configurable string clientSecret = ?;
-configurable string exchangeRateAPIKey = ?;
-
 @display {
     label: "rateconvert",
     id: "rateconvert-311bc702-c4cb-4836-abde-a377e04bfe2d"
@@ -45,24 +32,34 @@ service / on new http:Listener(9090) {
         });
     }
 
-    resource function get convert(decimal amount = 1.0, string target = "AUD", string base = "USD") returns PricingInfo|error {
+    resource function get convert(decimal amount = 1.0, string target = "AUD", string base = "USD") returns json|error {
 
         log:printInfo("new request:", base = base, target = target, amount = amount);
-        countryprofile:Currency getCurrencyCodeResponse = check self.countryprofileEp->getCurrencyCode(code = target);
-        exchangerates:CurrencyExchangeInfomation getExchangeRateForResponse = check self.exchangeratesEp->getExchangeRateFor(apikey = exchangeRateAPIKey, baseCurrency = base);
+        // countryprofile:Currency getCurrencyCodeResponse = check self.countryprofileEp->getCurrencyCode(code = target);
+        // exchangerates:CurrencyExchangeInfomation getExchangeRateForResponse = check self.exchangeratesEp->getExchangeRateFor(apikey = exchangeRateAPIKey, baseCurrency = base);
 
-        decimal exchangeRate = <decimal>getExchangeRateForResponse.conversion_rates[target];
+        // decimal exchangeRate = <decimal>getExchangeRateForResponse.conversion_rates[target];
 
-        decimal convertedAmount = amount * exchangeRate;
+        // decimal convertedAmount = amount * exchangeRate;
 
-        PricingInfo pricingInfo = {
-            currencyCode: target,
-            displayName: getCurrencyCodeResponse.displayName,
-            amount: convertedAmount
-        };
+        // PricingInfo pricingInfo = {
+        //     currencyCode: target,
+        //     displayName: getCurrencyCodeResponse.displayName,
+        //     amount: convertedAmount
+        // };
 
-        return pricingInfo;
+        // return pricingInfo;
+
+        return {};
     }
 }
 
+type PricingInfo record {
+    string currencyCode;
+    string displayName;
+    decimal amount;
+};
 
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+configurable string exchangeRateAPIKey = ?;

@@ -308,6 +308,31 @@ modules = [
 ]
 
 [[package]]
+org = "ballerinax"
+name = "exchangerates"
+version = "1.5.1"
+dependencies = [
+	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "url"},
+	{org = "ballerinai", name = "observe"}
+]
+modules = [
+	{org = "ballerinax", packageName = "exchangerates", moduleName = "exchangerates"}
+]
+
+[[package]]
+org = "ramith"
+name = "countryprofile"
+version = "1.4.0"
+dependencies = [
+	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "url"}
+]
+modules = [
+	{org = "ramith", packageName = "countryprofile", moduleName = "countryprofile"}
+]
+
+[[package]]
 org = "sarindas"
 name = "configCheck"
 version = "0.1.0"
@@ -316,7 +341,9 @@ dependencies = [
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "log"},
 	{org = "ballerina", name = "test"},
-	{org = "ballerinai", name = "observe"}
+	{org = "ballerinai", name = "observe"},
+	{org = "ballerinax", name = "exchangerates"},
+	{org = "ramith", name = "countryprofile"}
 ]
 modules = [
 	{org = "sarindas", packageName = "configCheck", moduleName = "configCheck"}
