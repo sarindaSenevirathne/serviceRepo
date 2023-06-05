@@ -5,6 +5,19 @@ import ballerina/http;
 
 # A service representing a network-accessible API
 # bound to port `9090`.
+# 
+# 
+
+type PricingInfo record {
+    string currencyCode;
+    string displayName;
+    decimal amount;
+};
+
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+configurable string exchangeRateAPIKey = ?;
+
 @display {
     label: "rateconvert",
     id: "rateconvert-311bc702-c4cb-4836-abde-a377e04bfe2d"
@@ -32,7 +45,7 @@ service / on new http:Listener(9090) {
         });
     }
 
-    resource function get convert(decimal amount, string target, string base) returns PricingInfo|error {
+    resource function get convert(decimal amount = 1.0, string target = "AUD", string base = "USD") returns PricingInfo|error {
 
         log:printInfo("new request:", base = base, target = target, amount = amount);
         countryprofile:Currency getCurrencyCodeResponse = check self.countryprofileEp->getCurrencyCode(code = target);
@@ -52,12 +65,4 @@ service / on new http:Listener(9090) {
     }
 }
 
-type PricingInfo record {
-    string currencyCode;
-    string displayName;
-    decimal amount;
-};
 
-configurable string clientId = ?;
-configurable string clientSecret = ?;
-configurable string exchangeRateAPIKey = ?;
