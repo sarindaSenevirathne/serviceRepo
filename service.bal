@@ -32,7 +32,7 @@ service / on new http:Listener(9090) {
         });
     }
 
-    resource function get convert(decimal amount = 1.0, string target = "AUD", string base = "USD") returns PricingInfo|error {
+    resource function get convert(decimal amount, string target, string base) returns PricingInfo|error {
 
         log:printInfo("new request:", base = base, target = target, amount = amount);
         countryprofile:Currency getCurrencyCodeResponse = check self.countryprofileEp->getCurrencyCode(code = target);
